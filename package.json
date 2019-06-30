@@ -38,8 +38,7 @@
   "dependencies": {
     "fs-extra": "^8.1.0",
     "jsdom": "^15.1.1",
-    "json2typescript": "^1.2.3",
-    "wappalyzer": "^5.8.2"
+    "json2typescript": "^1.2.3"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "^8.0.2",

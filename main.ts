@@ -11,7 +11,7 @@ const serve: boolean = args.some(val => val === '--serve');
 function createWindow() {
 
     win = new BrowserWindow({
-        width: 800,
+        minWidth: 1250,
         height: 600,
         webPreferences: {
             nodeIntegration: true,
@@ -40,6 +40,8 @@ function createWindow() {
             })
         );
     }
+
+    win.maximize();
 
     win.on('closed', () => {
         win = null;

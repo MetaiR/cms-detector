@@ -9,7 +9,7 @@ var args = process.argv.slice(1);
 var serve = args.some(function (val) { return val === '--serve'; });
 function createWindow() {
     win = new electron_1.BrowserWindow({
-        width: 800,
+        minWidth: 1250,
         height: 600,
         webPreferences: {
             nodeIntegration: true,
@@ -33,6 +33,7 @@ function createWindow() {
             slashes: true
         }));
     }
+    win.maximize();
     win.on('closed', function () {
         win = null;
     });

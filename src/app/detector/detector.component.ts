@@ -1,22 +1,22 @@
-import { ResultCMS } from './../share/models/result-cms';
-import { DetectorComponentService } from './detector-component.service';
+import { ResultCMS } from '../share/models/result-cms';
+import { DetectorService } from './detector.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'rp-detector-component',
-  templateUrl: './detector-component.component.html',
-  styleUrls: ['./detector-component.component.scss'],
+  selector: 'rp-detector',
+  templateUrl: './detector.component.html',
+  styleUrls: ['./detector.component.scss'],
   providers: [
-    DetectorComponentService
+    DetectorService
   ]
 })
-export class DetectorComponentComponent implements OnInit {
+export class DetectorComponent implements OnInit {
   path = 'C:\\Users\\Seyed\\Desktop\\New Text Document.txt';
   pending = true;
   resultCMSes: ResultCMS[] = [];
 
   constructor(
-    private _service: DetectorComponentService
+    private _service: DetectorService
   ) { }
 
   ngOnInit() {

@@ -1,0 +1,15 @@
+.vertical-padding {
+    padding-top: 10px;
+    padding-bottom: 10px
+}
+
+.margin {
+    $val: 15px;
+    &.left {
+        margin-left: $val;
+    }
+
+    &.bottom {
+        margin-bottom: $val;
+    }
+}

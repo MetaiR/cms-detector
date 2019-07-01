@@ -1,14 +1,14 @@
-import { ResultCMS } from './../share/models/result-cms';
-import { CMS } from './../share/models/cms';
-import { DbService } from './../share/db.service';
-import { Observable } from 'rxjs';
+import { ResultCMS } from '../share/models/result-cms';
+import { CMS } from '../share/models/cms';
+import { DbService } from '../share/db.service';
+import { Observable, TimeoutError } from 'rxjs';
 import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { readFileSync } from 'fs';
 import { JSDOM } from 'jsdom';
 
 @Injectable()
-export class DetectorComponentService {
+export class DetectorService {
     constructor(
         private _http: HttpClient,
         private _db: DbService
@@ -51,7 +51,7 @@ export class DetectorComponentService {
                 const jsdom = new JSDOM(res.body);
                 this.searchInCMS(jsdom, rc);
             },
-            msg => rc.statusCode = msg.status
+            msg => this.setError(rc, msg, msg.status ? msg.status : -1)
         );
     }
 
@@ -83,5 +83,16 @@ export class DetectorComponentService {
         }
 
         return result;
+    }
+
+    private setError(rc: ResultCMS, ex, status = -1) {
+        rc.statusCode = status;
+        rc.byCookies = 'error';
+        rc.byElements = 'error';
+        if (ex instanceof TimeoutError) {
+            rc.byCookies += ' (Timeout Error)';
+            rc.byElements += ' (Timeout Error)';
+        }
+        rc.loading = false;
     }
 }

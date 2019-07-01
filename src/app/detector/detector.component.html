@@ -1,0 +1,73 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12 vertical-padding">
+            <form
+                (submit)="submit()"
+                class="form-inline row align-items-left"
+            >
+                <div class="col-1">
+                    <label
+                        for="file-path"
+                        class="col-form-label "
+                    >
+                        File Path:
+                    </label>
+                </div>
+                <div class="col-3">
+                    <input
+                        [(ngModel)]="path"
+                        class="form-control"
+                        name="file-path"
+                        id="file-path"
+                        type="text"
+                        placeholder="file path"
+                    >
+                </div>
+                <button
+                    class="btn btn-outline-primary col-1"
+                    type="submit"
+                >
+                    Check
+                </button>
+                <button
+                    class="btn btn-link margin left col-2"
+                    [routerLink]="['/','settings']"
+                    type="button"
+                >
+                    Go to Settings
+                </button>
+            </form>
+        </div>
+        <div
+            class="col-12"
+            *ngIf="!pending"
+        >
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <th scope="col">#</th>
+                        <th scope="col">url</th>
+                        <th scope="col">http status code</th>
+                        <th scope="col">by elements</th>
+                        <th scope="col">by cookies</th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of resultCMSes; let i=index">
+                            <th scope="row">{{i + 1}}</th>
+                            <td>{{item.url}}</td>
+                            <td>
+                                {{item.loading ? 'Loading...' : item.statusCode }}
+                            </td>
+                            <td>
+                                {{item.loading ? 'Loading...' : item.byElements }}
+                            </td>
+                            <td>
+                                {{item.loading ? 'Loading...' : item.byCookies }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

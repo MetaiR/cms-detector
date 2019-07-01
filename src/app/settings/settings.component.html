@@ -2,12 +2,12 @@
     <div class="row">
         <div class="col-12 vertical-padding">
             <button
-                class="btn btn-link left-margin col-1"
+                class="btn btn-link col-1"
                 [routerLink]="['/','detect']"
-                type="button"
             >
                 Go Back
             </button>
+            <button class="btn btn-outline-primary col-2 margin left">+ Add new CMS</button>
         </div>
         <div
             *ngFor="let cms of db.cmses.reverse()"
@@ -18,25 +18,62 @@
                     <h5>{{cms.name}}</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-2">by elements:</div>
+                    <div class="row margin bottom">
+                        <div class="col-2">
+                            by elements:
+                            <br>
+                            <small class="text-muted">
+                                some unique DOM elements only be found in these kind of CMSes
+                            </small>
+                        </div>
                         <div class="col-10">
-                            <div class="table-responsive">
+                            <div
+                                class="table-responsive"
+                                *ngIf="cms.els.length !== 0; else empty"
+                            >
                                 <table class="table table-striped">
                                     <thead class="thead-dark">
                                         <th scope="col">#</th>
                                         <th scope="col">selector</th>
-                                        <th scope="col">attrabiute key</th>
-                                        <th scope="col">attrabiute value (concat)</th>
+                                        <th scope="col">attribute key</th>
+                                        <th scope="col">attribute value (concat)</th>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let el of cms.els; let i=index">
                                             <th scope="row">{{i + 1}}</th>
                                             <td>{{ el.selector}}</td>
-                                            <td>{{ el.attrabiute }}</td>
+                                            <td>{{ el.attribute }}</td>
                                             <td>{{ el.containsValue }}</td>
                                         </tr>
                                     </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                            by cookies:
+                            <br>
+                            <small class="text-muted">
+                                some unique cookies only be set by these kind of CMSes.
+                                <br>
+                                <span class="red">(</span>
+                                if value isn't set, only the existence of cookie will be checked
+                                <span class="red">)</span>
+                            </small>
+                        </div>
+                        <div class="col-10">
+                            <div
+                                class="table-responsive"
+                                *ngIf="cms.cookies.length !== 0; else empty"
+                            >
+                                <table class="table table-striped">
+                                    <thead class="thead-dark">
+                                        <th scope="col">#</th>
+                                        <th scope="col">cookie key</th>
+                                        <th scope="col">cookie value (concat)</th>
+                                    </thead>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                         </div>
@@ -60,3 +97,9 @@
         </div>
     </div>
 </div>
+
+<ng-template #empty>
+    <div class="text-center">
+        <h6 class="text-muted">empty</h6>
+    </div>
+</ng-template>

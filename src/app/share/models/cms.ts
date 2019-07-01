@@ -8,6 +8,8 @@ export class CMS {
     private _name: string = undefined;
     @JsonProperty('cms_el', [El], true)
     private _els: El[] = [];
+    // TODO: add cookies
+    private _cookies: any[] = [];
 
     constructor(
         name?: string,
@@ -47,6 +49,22 @@ export class CMS {
      */
     public set els(value: El[]) {
         this._els = value;
+    }
+
+    /**
+     * Getter cookies
+     * @return {any[] }
+     */
+    public get cookies(): any[] {
+        return this._cookies;
+    }
+
+    /**
+     * Setter cookies
+     * @param {any[] } value
+     */
+    public set cookies(value: any[]) {
+        this._cookies = value;
     }
 
 }

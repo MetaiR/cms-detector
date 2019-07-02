@@ -21,14 +21,14 @@ export class DetectorService {
             rc = new ResultCMS();
             rc.url = url;
             array.push(rc);
-            this.sendHttpReq(rc);
+            this.sendHttpReqAndSearch(rc);
         }
 
-        // it will be async so the other stuff will be done by changing variables refrence
+        // it is done asyncly so the other stuff will be done by changing variables refrence
         return array;
     }
 
-    private async sendHttpReq(rc: ResultCMS) {
+    private async sendHttpReqAndSearch(rc: ResultCMS) {
         // cant use angular httpClient because it wont get cookies
         const types = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8';
         try {
@@ -47,19 +47,19 @@ export class DetectorService {
             rc.statusText = Helper.statusText(status);
             if (status === 200) {
                 const body = await response.text();
-                this.searchInCMS(body, rc);
+                this.searchInCMSes(body, rc);
             } else {
                 rc.loading = false;
             }
         } catch (ex) {
             rc.statusCode = -1;
-            rc.statusText = 'try with a proxy';
+            rc.statusText = 'probably a timeout (try with a proxy)';
             rc.loading = false;
             console.log('error', ex);
         }
     }
 
-    private async searchInCMS(body: string, rc: ResultCMS) {
+    private async searchInCMSes(body: string, rc: ResultCMS) {
         const db = this._db.db;
         const jsdom = new JSDOM(body);
 
@@ -109,7 +109,7 @@ export class DetectorService {
         // get cookies
         const session = remote.session;
         let cookies = await session.defaultSession.cookies.get({}) as any;
-        // just for have autocomplete :|
+        // just for having autocomplete! :|
         cookies = cookies as Cookie[];
 
         const domainName = Helper.pureUrl(url);

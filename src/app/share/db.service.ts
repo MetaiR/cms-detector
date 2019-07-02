@@ -3,17 +3,22 @@ import { DB } from './models/db';
 import { CMS } from './models/cms';
 import { El } from './models/el';
 import { Injectable, NgZone } from '@angular/core';
-import { existsSync, readFileSync, writeFile } from 'fs-extra';
+import { existsSync, readFileSync, writeFile, mkdir, mkdirSync, writeFileSync } from 'fs';
 import { JsonConvert, ValueCheckingMode } from 'json2typescript';
 import * as os from 'os';
-import { mkdir } from 'fs';
+import { v4 } from 'uuid';
+import * as clone from 'clone';
 
 @Injectable()
 export class DbService {
     constructor(
         private _zone: NgZone
-    ) { }
+    ) {
+        const separator = this.getSeparator();
+        this.dbLocation = `${os.homedir()}${separator}.cms-detector${separator}db.json`;
+    }
 
+    private static dbLocation: string;
     private static db: DB;
     private static jsonConvert: JsonConvert;
 
@@ -36,22 +41,42 @@ export class DbService {
         DbService.db = db;
     }
 
-    loadOrGenerateDB() {
-        const separator = this.getSeparator();
+    get dbLocation(): string {
+        return DbService.dbLocation;
+    }
 
-        const dbLocation = `${os.homedir()}${separator}.cms-detector${separator}db.json`;
+    set dbLocation(dbLocation: string) {
+        DbService.dbLocation = dbLocation;
+    }
+
+    deleteCMSFormDB(cms: CMS): DB {
+        let db = this.db;
+        const index = db.cmses.indexOf(cms);
+
+        if (index !== -1) {
+            db = clone<DB>(this.db, true);
+            db.cmses.splice(index, 1);
+            this.generateAndLoadDB(false, db);
+        }
+
+        return db;
+    }
+
+    loadOrGenerateDB() {
+        const dbLocation = this.dbLocation;
         const dbExisted = existsSync(dbLocation);
 
         if (dbExisted) {
             // loading db settings
-            this.loadDB(dbLocation);
+            this.loadDB();
         } else {
             // generate one
-            this.generateAndLoadDB(dbLocation);
+            this.generateAndLoadDB(true);
         }
     }
 
-    private loadDB(path: string) {
+    private loadDB() {
+        const path = this.dbLocation;
         const str = readFileSync(path, { encoding: 'utf8' });
         const json = JSON.parse(str);
         const db = this.jConverter.deserialize(json, DB) as DB;
@@ -59,41 +84,92 @@ export class DbService {
         this.db = db;
     }
 
-    private generateAndLoadDB(path: string) {
-        const el1 = new El(
-            'meta[name="GENERATOR"]',
-            'content',
-            'DotNetNuke'
-        );
+    private generateAndLoadDB(async = false, database?: DB) {
+        let db: DB = database;
+        if (!db) {
+            const el1 = new El(
+                'meta[name="GENERATOR"]',
+                'content',
+                'DotNetNuke'
+            );
 
-        const cookie1 = new Cookie('.DOTNETNUKE');
-        const cookie2 = new Cookie('dnn_IsMobile');
+            const cookie1 = new Cookie('.DOTNETNUKE');
+            const cookie2 = new Cookie('dnn_IsMobile');
 
-        const keyword1 = 'DNN Platform';
+            const keyword1 = 'DNN Platform';
 
-        const cms = new CMS('DotNetNuke (DNN)', [el1], [cookie1, cookie2], [keyword1]);
+            const cms = new CMS(v4(), 'DotNetNuke (DNN)', [el1], [cookie1, cookie2], [keyword1]);
 
-        const db = new DB([cms]);
-
-        this.db = db;
+            db = new DB([cms]);
+        }
 
         const json = this.jConverter.serialize(db);
         const str = JSON.stringify(json);
 
-        this._zone.runOutsideAngular(
-            () => {
-                const separator = this.getSeparator();
-                const arr = path.split(separator);
-                arr.splice(arr.length - 1, 1);
-                const directory = arr.join(separator);
-
-                if (!existsSync(directory)) {
-                    mkdir(directory, { recursive: true }, (err) => {
-                        writeFile(path, str, { encoding: 'utf8' });
-                    });
+        if (async) {
+            this._zone.runOutsideAngular(
+                () => {
+                    this.writeOnDB(str, true);
                 }
+            );
+        } else {
+            this.writeOnDB(str);
+        }
+
+        this.db = db;
+    }
+
+    // this one is a little messy | sorry :D
+    private writeOnDB(str: string, async = false) {
+        const path = this.dbLocation;
+        const separator = this.getSeparator();
+        const arr = path.split(separator);
+        arr.splice(arr.length - 1, 1);
+        const directory = arr.join(separator);
+
+        const existed = existsSync(directory);
+
+        if (async) {
+            if (!existed) {
+                mkdir(directory, { recursive: true }, (err) => {
+                    if (err) {
+                        this.errorAlert();
+                        return;
+                    }
+                    this.writeAsync(path, str);
+                });
+            } else {
+                this.writeAsync(path, str);
             }
-        );
+        } else {
+            try {
+                if (!existed) {
+                    mkdirSync(directory, { recursive: true });
+                    this.writeSync(path, str);
+                } else {
+                    this.writeSync(path, str);
+                }
+            } catch (e) {
+                this.errorAlert();
+            }
+        }
+    }
+
+    private writeAsync(path: string, str: string) {
+        writeFile(path, str, { encoding: 'utf8' }, (e) => {
+            if (e) {
+                this.errorAlert();
+                return;
+            }
+        });
+    }
+
+    private writeSync(path: string, str: string) {
+        writeFileSync(path, str, { encoding: 'utf8' });
+    }
+
+    private errorAlert() {
+        alert('there is an error when we try to create ur databse');
     }
 
     private getSeparator() {

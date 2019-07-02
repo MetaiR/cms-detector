@@ -1,3 +1,4 @@
+import { CMS } from './../share/models/cms';
 import { Component, OnInit } from '@angular/core';
 import { DbService } from '../share/db.service';
 import { DB } from '../share/models/db';
@@ -12,11 +13,20 @@ export class SettingsComponent implements OnInit {
   loading = false;
 
   constructor(
-    private _db: DbService
+    private _dbService: DbService
   ) { }
 
   ngOnInit() {
-    this.db = this._db.db;
+    this.db = this._dbService.db;
   }
 
+  deleteCMS(cms: CMS) {
+    if (confirm('Are u sure?')) {
+      this.loading = true;
+
+      this.db = this._dbService.deleteCMSFormDB(cms);
+    }
+
+    this.loading = false;
+  }
 }

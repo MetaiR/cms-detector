@@ -5,6 +5,8 @@ import { JsonObject, JsonProperty } from 'json2typescript';
 
 @JsonObject('CMS')
 export class CMS {
+    @JsonProperty('cms_id', String, true)
+    private _id: string = undefined;
     @JsonProperty('cms_property', String, true)
     private _name: string = undefined;
     @JsonProperty('cms_el', [El], true)
@@ -15,15 +17,33 @@ export class CMS {
     private _extraKeywords: string[] = [];
 
     constructor(
+        id?: string,
         name?: string,
         els?: El[],
         cookies?: Cookie[],
         extraKeywords?: string[]
     ) {
+        this._id = id;
         this._name = name;
         this._els = els ? els : [];
         this._cookies = cookies ? cookies : [];
         this._extraKeywords = extraKeywords ? extraKeywords : [];
+    }
+
+    /**
+     * Getter id
+     * @return {string }
+     */
+    public get id(): string {
+        return this._id;
+    }
+
+    /**
+     * Setter id
+     * @param {string } value
+     */
+    public set id(value: string) {
+        this._id = value;
     }
 
     /**

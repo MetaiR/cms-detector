@@ -1,4 +1,4 @@
-<div class="container">
+<div class="small-container">
     <div class="row">
         <div class="col-12 vertical-padding">
             <form
@@ -30,7 +30,7 @@
                     Check
                 </button>
                 <button
-                    class="btn btn-link margin left col-2"
+                    class="btn btn-link margin left col-2 text-left"
                     [routerLink]="['/','settings']"
                     type="button"
                 >
@@ -43,13 +43,15 @@
             *ngIf="!pending"
         >
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped bordered-table">
                     <thead class="thead-dark">
                         <th scope="col">#</th>
                         <th scope="col">url</th>
                         <th scope="col">http status code</th>
+                        <th scope="col">http status text</th>
                         <th scope="col">by elements</th>
                         <th scope="col">by cookies</th>
+                        <th scope="col">by extra keywords</th>
                     </thead>
                     <tbody>
                         <tr *ngFor="let item of resultCMSes; let i=index">
@@ -59,10 +61,16 @@
                                 {{item.loading ? 'Loading...' : item.statusCode }}
                             </td>
                             <td>
+                                {{item.loading ? 'Loading...' : item.statusText }}
+                            </td>
+                            <td>
                                 {{item.loading ? 'Loading...' : item.byElements }}
                             </td>
                             <td>
                                 {{item.loading ? 'Loading...' : item.byCookies }}
+                            </td>
+                            <td>
+                                {{item.loading ? 'Loading...' : item.byExtraKey }}
                             </td>
                         </tr>
                     </tbody>

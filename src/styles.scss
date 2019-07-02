@@ -4,7 +4,7 @@
 }
 
 .margin {
-    $val: 15px;
+    $val: 20px;
     &.left {
         margin-left: $val;
     }
@@ -16,4 +16,13 @@
 
 .red {
     color: #c73030bb;
+}
+
+.small-container {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.bordered-table {
+    border: 1px solid;
 }

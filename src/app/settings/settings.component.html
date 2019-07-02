@@ -7,7 +7,12 @@
             >
                 Go Back
             </button>
-            <button class="btn btn-outline-primary col-2 margin left">+ Add new CMS</button>
+            <button
+                [disabled]="loading"
+                class="btn btn-outline-primary col-2 margin left"
+            >
+                {{ loading ? 'Loading...' : '+ Add new CMS' }}
+            </button>
         </div>
         <div
             *ngFor="let cms of db.cmses.reverse()"
@@ -19,19 +24,19 @@
                 </div>
                 <div class="card-body">
                     <div class="row margin bottom">
-                        <div class="col-2">
+                        <div class="col-3">
                             by elements:
                             <br>
                             <small class="text-muted">
-                                some unique DOM elements only be found in these kind of CMSes
+                                some unique DOM elements only be found in these kinds of CMSes
                             </small>
                         </div>
-                        <div class="col-10">
+                        <div class="col-9">
                             <div
                                 class="table-responsive"
                                 *ngIf="cms.els.length !== 0; else empty"
                             >
-                                <table class="table table-striped">
+                                <table class="table table-striped bordered-table">
                                     <thead class="thead-dark">
                                         <th scope="col">#</th>
                                         <th scope="col">selector</th>
@@ -50,30 +55,68 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-2">
+                    <div class="row margin bottom">
+                        <div class="col-3">
                             by cookies:
                             <br>
                             <small class="text-muted">
-                                some unique cookies only be set by these kind of CMSes.
+                                some unique cookies only be set by these kinds of CMSes.
                                 <br>
                                 <span class="red">(</span>
                                 if value isn't set, only the existence of cookie will be checked
                                 <span class="red">)</span>
                             </small>
                         </div>
-                        <div class="col-10">
+                        <div class="col-9">
                             <div
                                 class="table-responsive"
                                 *ngIf="cms.cookies.length !== 0; else empty"
                             >
-                                <table class="table table-striped">
+                                <table class="table table-striped bordered-table">
                                     <thead class="thead-dark">
                                         <th scope="col">#</th>
                                         <th scope="col">cookie key</th>
                                         <th scope="col">cookie value (concat)</th>
                                     </thead>
-                                    <tbody></tbody>
+                                    <tbody>
+                                        <tr *ngFor="let cookie of cms.cookies; let i=index">
+                                            <th scope="row">{{i + 1}}</th>
+                                            <td>{{ cookie.key }}</td>
+                                            <td>{{ cookie.value }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                            by extra keywords:
+                            <br>
+                            <small class="text-muted">
+                                some unique strings in these kinds of CMSes html. (include comments)
+                                <br>
+                                <span class="red">(</span>
+                                use it if u really need this and have no other choices, because it will iterate over the entire html code
+                                <span class="red">)</span>
+                            </small>
+                        </div>
+                        <div class="col-9">
+                            <div
+                                class="table-responsive"
+                                *ngIf="cms.extraKeywords.length !== 0; else empty"
+                            >
+                                <table class="table table-striped bordered-table">
+                                    <thead class="thead-dark">
+                                        <th scope="col">#</th>
+                                        <th scope="col">keyword</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let keyword of cms.extraKeywords; let i=index">
+                                            <th scope="row">{{i + 1}}</th>
+                                            <td>{{ keyword }}</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

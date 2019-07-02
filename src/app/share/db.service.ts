@@ -1,3 +1,4 @@
+import { Cookie } from './models/cookie';
 import { DB } from './models/db';
 import { CMS } from './models/cms';
 import { El } from './models/el';
@@ -64,7 +65,14 @@ export class DbService {
             'content',
             'DotNetNuke'
         );
-        const cms = new CMS('DotNetNuke (DNN)', [el1]);
+
+        const cookie1 = new Cookie('.DOTNETNUKE');
+        const cookie2 = new Cookie('dnn_IsMobile');
+
+        const keyword1 = 'DNN Platform';
+
+        const cms = new CMS('DotNetNuke (DNN)', [el1], [cookie1, cookie2], [keyword1]);
+
         const db = new DB([cms]);
 
         this.db = db;

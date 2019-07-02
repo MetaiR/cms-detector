@@ -2,6 +2,8 @@ export class ResultCMS {
     private _url: string;
     private _byElements = 'N/A';
     private _byCookies = 'N/A';
+    private _byExtraKey = 'N/A';
+    private _statusText = 'N/A';
     private _statusCode: number;
     private _loading = true;
 
@@ -83,6 +85,38 @@ export class ResultCMS {
      */
     public set loading(value: boolean) {
         this._loading = value;
+    }
+
+    /**
+     * Getter statusText
+     * @return {string }
+     */
+    public get statusText(): string {
+        return this._statusText;
+    }
+
+    /**
+     * Setter statusText
+     * @param {string } value
+     */
+    public set statusText(value: string) {
+        this._statusText = value;
+    }
+
+    /**
+     * Getter byExtraKey
+     * @return {string }
+     */
+    public get byExtraKey(): string {
+        return this._byExtraKey;
+    }
+
+    /**
+     * Setter byExtraKey
+     * @param {string } value
+     */
+    public set byExtraKey(value: string) {
+        this._byExtraKey = value;
     }
 
 }

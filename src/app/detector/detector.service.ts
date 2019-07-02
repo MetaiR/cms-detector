@@ -1,34 +1,17 @@
+import { Helper } from './../share/helper';
 import { ResultCMS } from '../share/models/result-cms';
 import { CMS } from '../share/models/cms';
 import { DbService } from '../share/db.service';
-import { Observable, TimeoutError } from 'rxjs';
-import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { readFileSync } from 'fs';
 import { JSDOM } from 'jsdom';
+import { remote, Cookie } from 'electron';
 
 @Injectable()
 export class DetectorService {
     constructor(
-        private _http: HttpClient,
         private _db: DbService
     ) { }
-
-    getSite(url: string): Observable<HttpResponse<string>> {
-        const types = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8';
-
-        const headers = new HttpHeaders().set('Accept', types);
-
-        return this._http.get(
-            url,
-            {
-                observe: 'response',
-                headers: headers,
-                responseType: 'text',
-                withCredentials: false
-            }
-        );
-    }
 
     detectCMS(path: string): ResultCMS[] {
         const urls = readFileSync(path, { encoding: 'utf8' });
@@ -41,35 +24,70 @@ export class DetectorService {
             this.sendHttpReq(rc);
         }
 
+        // it will be async so the other stuff will be done by changing variables refrence
         return array;
     }
 
-    sendHttpReq(rc: ResultCMS) {
-        this.getSite(rc.url).subscribe(
-            res => {
-                rc.statusCode = res.status;
-                const jsdom = new JSDOM(res.body);
-                this.searchInCMS(jsdom, rc);
-            },
-            msg => this.setError(rc, msg, msg.status ? msg.status : -1)
-        );
+    private async sendHttpReq(rc: ResultCMS) {
+        // cant use angular httpClient because it wont get cookies
+        const types = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8';
+        try {
+            const response = await fetch(rc.url, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Accept': types
+                }
+            });
+
+            const status = response.status;
+
+            rc.statusCode = status;
+            // cant use response.statusText because it is not working
+            rc.statusText = Helper.statusText(status);
+            if (status === 200) {
+                const body = await response.text();
+                this.searchInCMS(body, rc);
+            } else {
+                rc.loading = false;
+            }
+        } catch (ex) {
+            rc.statusCode = -1;
+            rc.statusText = 'try with a proxy';
+            rc.loading = false;
+            console.log('error', ex);
+        }
     }
 
-    searchInCMS(jsdom: JSDOM, rc: ResultCMS) {
+    private async searchInCMS(body: string, rc: ResultCMS) {
         const db = this._db.db;
+        const jsdom = new JSDOM(body);
+
         for (const cms of db.cmses) {
             if (rc.byElements === 'N/A') {
                 rc.byElements = this.searchInNodes(jsdom, cms);
             }
 
-            if (rc.byElements !== 'N/A') {
+            if (rc.byCookies === 'N/A') {
+                rc.byCookies = await this.searchInCookies(cms, rc.url);
+            }
+
+            if (rc.byExtraKey === 'N/A') {
+                rc.byExtraKey = this.searchInKeywords(cms, body);
+            }
+
+            if (
+                rc.byElements !== 'N/A' &&
+                rc.byCookies !== 'N/A' &&
+                rc.byExtraKey !== 'N/A'
+            ) {
                 break;
             }
         }
         rc.loading = false;
     }
 
-    searchInNodes(jsdom: JSDOM, cms: CMS): string {
+    private searchInNodes(jsdom: JSDOM, cms: CMS): string {
         let result = 'N/A';
         for (const el of cms.els) {
             const element = jsdom.window.document.querySelector(el.selector);
@@ -85,14 +103,47 @@ export class DetectorService {
         return result;
     }
 
-    private setError(rc: ResultCMS, ex, status = -1) {
-        rc.statusCode = status;
-        rc.byCookies = 'error';
-        rc.byElements = 'error';
-        if (ex instanceof TimeoutError) {
-            rc.byCookies += ' (Timeout Error)';
-            rc.byElements += ' (Timeout Error)';
+    private async searchInCookies(cms: CMS, url: string): Promise<string> {
+        let result = 'N/A';
+
+        // get cookies
+        const session = remote.session;
+        let cookies = await session.defaultSession.cookies.get({}) as any;
+        // just for have autocomplete :|
+        cookies = cookies as Cookie[];
+
+        const domainName = Helper.pureUrl(url);
+
+        outer:
+        for (const cookie of cms.cookies) {
+            for (const c of cookies) {
+                if (
+                    (c.domain === domainName || c.domain === `www.${domainName}`) &&
+                    c.name === cookie.key
+                ) {
+                    if (
+                        (cookie.value && c.value.indexOf(cookie.value)) ||
+                        !cookie.value
+                    ) {
+                        result = cms.name;
+                        break outer;
+                    }
+                }
+            }
         }
-        rc.loading = false;
+
+        return result;
+    }
+
+    private searchInKeywords(cms: CMS, body: string): string {
+        let result = 'N/A';
+        for (const keyword of cms.extraKeywords) {
+            if (body.indexOf(keyword) !== -1) {
+                result = cms.name;
+                break;
+            }
+        }
+
+        return result;
     }
 }

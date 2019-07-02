@@ -1,4 +1,5 @@
 // we should write undefined incase of using 3rd library like json2typescript
+import { Cookie } from './cookie';
 import { El } from './el';
 import { JsonObject, JsonProperty } from 'json2typescript';
 
@@ -8,15 +9,21 @@ export class CMS {
     private _name: string = undefined;
     @JsonProperty('cms_el', [El], true)
     private _els: El[] = [];
-    // TODO: add cookies
-    private _cookies: any[] = [];
+    @JsonProperty('cms_cookie', [Cookie], true)
+    private _cookies: Cookie[] = [];
+    @JsonProperty('cms_extra_keyword', [String], true)
+    private _extraKeywords: string[] = [];
 
     constructor(
         name?: string,
-        els?: El[]
+        els?: El[],
+        cookies?: Cookie[],
+        extraKeywords?: string[]
     ) {
         this._name = name;
         this._els = els ? els : [];
+        this._cookies = cookies ? cookies : [];
+        this._extraKeywords = extraKeywords ? extraKeywords : [];
     }
 
     /**
@@ -51,20 +58,38 @@ export class CMS {
         this._els = value;
     }
 
+
     /**
      * Getter cookies
-     * @return {any[] }
+     * @return {Cookie[] }
      */
-    public get cookies(): any[] {
+    public get cookies(): Cookie[] {
         return this._cookies;
     }
 
     /**
      * Setter cookies
-     * @param {any[] } value
+     * @param {Cookie[] } value
      */
-    public set cookies(value: any[]) {
+    public set cookies(value: Cookie[]) {
         this._cookies = value;
     }
+
+    /**
+     * Getter extraKeywords
+     * @return {string[] }
+     */
+    public get extraKeywords(): string[] {
+        return this._extraKeywords;
+    }
+
+    /**
+     * Setter extraKeywords
+     * @param {string[] } value
+     */
+    public set extraKeywords(value: string[]) {
+        this._extraKeywords = value;
+    }
+
 
 }

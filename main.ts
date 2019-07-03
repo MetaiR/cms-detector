@@ -15,7 +15,8 @@ function createWindow() {
         height: 600,
         webPreferences: {
             nodeIntegration: true,
-            webSecurity: false
+            webSecurity: false,
+            devTools: serve ? true : false
         },
     });
 
@@ -30,6 +31,7 @@ function createWindow() {
         // The following is optional and will open the DevTools:
         win.webContents.openDevTools();
     } else {
+        win.setMenu(null);
         // load the dist folder from Angular
         win.loadURL(
             url.format({

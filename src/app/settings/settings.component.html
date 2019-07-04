@@ -133,6 +133,7 @@
                     <button
                         [disabled]="loading"
                         class="btn btn-sm btn-outline-dark margin left"
+                        (click)="openModal(cms)"
                     >
                         {{loading ? 'Loading' : 'Edit'}}
                     </button>
@@ -147,3 +148,79 @@
         <h6 class="text-muted">empty</h6>
     </div>
 </ng-template>
+
+<rp-modal #modal>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    {{ cms.id ? 'Editing CMS' : 'New CMS' }}
+                </h4>
+                <button
+                    type="button"
+                    class="close"
+                    [rp-close-modal]="modal"
+                >
+                    &times;
+                </button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for>CMS name</label>
+                            <input
+                                type="text"
+                                [(ngModel)]="cms.name"
+                                name="cms-name"
+                                id="cms-name"
+                                class="form-control"
+                                placeholder="name"
+                                aria-describedby="helpName"
+                            >
+                            <small
+                                id="helpName"
+                                class="text-muted"
+                            >
+                                the name of this cms
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card text-left">
+                            <div class="card-header text-center">
+                                <h5 class="card-title">Elements</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                          <label for=""></label>
+                                          <input type="text" name="" class="form-control" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    [rp-close-modal]="modal"
+                >
+                    Close
+                </button>
+            </div>
+
+        </div>
+    </div>
+</rp-modal>

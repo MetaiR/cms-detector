@@ -1,3 +1,4 @@
+import { ModalModule } from './share/modules/modal/modal.module';
 import { AppRoutingModule } from './app-routing.module';
 import { DbService } from './share/db.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -21,7 +22,8 @@ import { SettingsComponent } from './settings/settings.component';
       BrowserAnimationsModule,
       AppRoutingModule,
       FormsModule,
-      HttpClientModule
+      HttpClientModule,
+      ModalModule
    ],
    providers: [
       DbService

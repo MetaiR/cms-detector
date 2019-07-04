@@ -1,7 +1,9 @@
 import { CMS } from './../share/models/cms';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DbService } from '../share/db.service';
 import { DB } from '../share/models/db';
+import { ModalComponent } from '../share/modules/modal/modal.component';
+import * as clone from 'clone';
 
 @Component({
   selector: 'rp-settings',
@@ -11,6 +13,9 @@ import { DB } from '../share/models/db';
 export class SettingsComponent implements OnInit {
   db: DB;
   loading = false;
+  cms: CMS = new CMS();
+
+  @ViewChild(ModalComponent, { static: false }) private _modal: ModalComponent;
 
   constructor(
     private _dbService: DbService
@@ -28,5 +33,10 @@ export class SettingsComponent implements OnInit {
     }
 
     this.loading = false;
+  }
+
+  openModal(cms?: CMS) {
+    this.cms = cms ? clone<CMS>(cms, true) : new CMS();
+    this._modal.open();
   }
 }

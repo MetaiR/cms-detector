@@ -1,6 +1,6 @@
 import { ResultCMS } from '../share/models/result-cms';
 import { DetectorService } from './detector.service';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'rp-detector',
@@ -10,18 +10,14 @@ import { Component, OnInit } from '@angular/core';
     DetectorService
   ]
 })
-export class DetectorComponent implements OnInit {
-  path = 'C:\\Users\\Seyed\\Desktop\\New Text Document.txt';
+export class DetectorComponent {
+  path = '';
   pending = true;
   resultCMSes: ResultCMS[] = [];
 
   constructor(
     private _service: DetectorService
   ) { }
-
-  ngOnInit() {
-
-  }
 
   submit() {
     if (this.path == null || this.path.trim().length === 0) {

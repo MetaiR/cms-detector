@@ -2,20 +2,10 @@
   <a href="https://angular.io/">
     <img style="display: inline-block" src="https://angular.io/assets/images/logos/angular/angular.svg" width="128" height="128">
   </a>
-  <a href="http://typeorm.io/">
-    <img style="display: inline-block" src="https://github.com/typeorm/typeorm/raw/master/resources/logo_big.png" width="292" height="128">
-  </a>
   <br>
 </div>
 
 [![Electron Logo](https://electronjs.org/images/electron-logo.svg)](https://electronjs.org)
-
-
-[![Build Status](https://travis-ci.org/CubikNeRubik/angular-electron-typeorm-starter.svg?branch=master)](https://travis-ci.org/CubikNeRubik/angular-electron-typeorm-starter)
-[![License](http://img.shields.io/badge/Licence-MIT-brightgreen.svg)](LICENSE.md)
-
-[![Watch on GitHub][github-watch-badge]][github-watch]
-[![Star on GitHub][github-star-badge]][github-star]
 
 # Quickstart
 ``` bash
@@ -33,9 +23,6 @@ Currently runs with:
 - Angular v8.0.3
 - Electron v5.0.4
 - Electron Builder v20.44.1
-- Angular Material v8.0.1
-- TypeORM v0.2.18
-- SQLite v4.0.9
 
 With this start kit, you can :
 
@@ -90,8 +77,3 @@ You can desactivate "Developer Tools" by commenting `win.webContents.openDevTool
 
 1. **Browser mode.** You can't use TypeORM in browser so it is not possible.If you need to run app in browser and don't need TypeORM you can use [angular-electron](https://github.com/maximegris/angular-electron) for that.
 1. **Windows Build.** You cannot make build for `windows` if path to project folder contains spaces or not latin letters.
- 
-[github-watch-badge]: https://img.shields.io/github/watchers/CubikNeRubik/angular-electron-typeorm-starter.svg?style=social
-[github-watch]: https://github.com/CubikNeRubik/angular-electron-typeorm-starter/watchers
-[github-star-badge]: https://img.shields.io/github/stars/CubikNeRubik/angular-electron-typeorm-starter.svg?style=social
-[github-star]: https://github.com/CubikNeRubik/angular-electron-typeorm-starter/stargazers

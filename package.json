@@ -2,8 +2,8 @@
   "name": "cms-detector",
   "version": "1.0.0",
   "main": "main.js",
-  "description": "",
-  "homepage": "https://github.com/CubikNeRubik/angular-electron-typeorm-starter",
+  "description": "just a project to test my self",
+  "homepage": "https://github.com/metair/cms-detector",
   "author": {
     "name": "Seyed Ali Roshan",
     "email": "seyedalilight@gmail.com"
@@ -25,7 +25,8 @@
     "electron:serve": "wait-on http-get://localhost:4200/ && npm run electron:tsc && electron ./ --serve",
     "electron:local": "npm run build:prod && electron .",
     "electron:linux": "npm run build:prod && npx electron-builder build --linux",
-    "electron:windows": "npm run build:prod && npx electron-builder build --windows",
+    "electron:windows": "npm run build:prod && npx electron-builder build --windows --ia32 --x64",
+    "electron:windows:32bit": "npm run build:prod && npx electron-builder build --windows --ia32",
     "electron:mac": "npm run build:prod && npx electron-builder build --mac",
     "start": "npm run postinstall:electron && npm-run-all -p ng:serve electron:serve",
     "ng:serve": "ng serve",

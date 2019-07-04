@@ -10,10 +10,8 @@
   },
   "keywords": [
     "angular",
-    "angular 6",
     "electron",
     "typescript",
-    "typeorm",
     "sass",
     "scss"
   ],

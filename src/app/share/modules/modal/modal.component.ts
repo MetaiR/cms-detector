@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, EventEmitter, Input } from '@angular/core';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
@@ -55,5 +55,9 @@ export class ModalComponent {
         } else {
             this.open();
         }
+    }
+
+    public setBackDrop(enabled: boolean) {
+        $(this._modal.nativeElement).modal({ backdrop: enabled });
     }
 }

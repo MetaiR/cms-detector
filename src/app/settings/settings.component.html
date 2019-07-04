@@ -10,6 +10,7 @@
             <button
                 [disabled]="loading"
                 class="btn btn-outline-primary col-2 margin left"
+                (click)="openModal()"
             >
                 {{ loading ? 'Loading...' : '+ Add new CMS' }}
             </button>
@@ -114,7 +115,7 @@
                                     <tbody>
                                         <tr *ngFor="let keyword of cms.extraKeywords; let i=index">
                                             <th scope="row">{{i + 1}}</th>
-                                            <td>{{ keyword }}</td>
+                                            <td>{{ keyword.word }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -169,39 +170,183 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label for>CMS name</label>
-                            <input
-                                type="text"
-                                [(ngModel)]="cms.name"
-                                name="cms-name"
-                                id="cms-name"
-                                class="form-control"
-                                placeholder="name"
-                                aria-describedby="helpName"
-                            >
-                            <small
-                                id="helpName"
-                                class="text-muted"
-                            >
-                                the name of this cms
-                            </small>
-                        </div>
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label for="cms-id">CMS name</label>
+                        <input
+                            type="text"
+                            [(ngModel)]="cms.name"
+                            name="cms-name"
+                            id="cms-id"
+                            class="form-control"
+                            placeholder="CMS Name"
+                            aria-describedby="helpName"
+                        >
+                        <small
+                            id="helpName"
+                            class="text-muted"
+                        >
+                            the name of this cms
+                        </small>
+
+                        <br>
+                        <br>
+                        if values are incorrect, that row will be ignored. also for removing even the first entry please make its fields empty
                     </div>
-                    <div class="col-12">
+                    <div class="col-12 margin bottom">
                         <div class="card text-left">
                             <div class="card-header text-center">
                                 <h5 class="card-title">Elements</h5>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                          <label for=""></label>
-                                          <input type="text" name="" class="form-control" placeholder="">
-                                        </div>
+                                <div
+                                    class="form-row"
+                                    *ngFor="let el of cms.els; let i = index"
+                                >
+                                    <div class="form-group col-4">
+                                        <label [for]="'el-selector-id-' + i">Selector</label>
+                                        <input
+                                            type="text"
+                                            [(ngModel)]="el.selector"
+                                            [name]="'el-selector-' + i"
+                                            [id]="'el-selector-id-' + i"
+                                            class="form-control"
+                                            placeholder="Element Selector"
+                                        >
+                                    </div>
+                                    <div class="form-group col-3">
+                                        <label [for]="'el-attribute-id-' + i">Attribute</label>
+                                        <input
+                                            type="text"
+                                            [(ngModel)]="el.attribute"
+                                            [name]="'el-attribute-' + i"
+                                            [id]="'el-attribute-id-' + i"
+                                            class="form-control"
+                                            placeholder="Element Attribute"
+                                        >
+                                    </div>
+                                    <div class="form-group col-3">
+                                        <label [for]="'el-value-' + i">Value (Contains)</label>
+                                        <input
+                                            type="text"
+                                            [(ngModel)]="el.containsValue"
+                                            [name]="'el-value-' + i"
+                                            [id]="'el-value-id-' + i"
+                                            class="form-control"
+                                            placeholder="Element Attribute Value"
+                                        >
+                                    </div>
+                                    <div class="form-group col-2">
+                                        <button
+                                            class="btn btn-outline-primary col-12 form-element-without-label"
+                                            *ngIf="i === 0; else removeBtn"
+                                            (click)="addEntry(1)"
+                                        >
+                                            + Add
+                                        </button>
+                                        <ng-template #removeBtn>
+                                            <button
+                                                (click)="removeEntry(1, i)"
+                                                class="btn btn-outline-danger col-12 form-element-without-label"
+                                            >
+                                                - Remove
+                                            </button>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card text-left">
+                            <div class="card-header text-center">
+                                <h5 class="card-title">Cookies</h5>
+                            </div>
+                            <div class="card-body">
+                                <div
+                                    class="form-row"
+                                    *ngFor="let cookie of cms.cookies; let i = index"
+                                >
+                                    <div class="form-group col-5">
+                                        <label [for]="'cookie-key-id-' + i">Key</label>
+                                        <input
+                                            type="text"
+                                            [(ngModel)]="cookie.key"
+                                            [name]="'cookie-key-' + i"
+                                            [id]="'cookie-key-id-' + i"
+                                            class="form-control"
+                                            placeholder="Cookie key"
+                                        >
+                                    </div>
+                                    <div class="form-group col-5">
+                                        <label [for]="'cookie-value-id-' + i">Value (can be empty)</label>
+                                        <input
+                                            type="text"
+                                            [(ngModel)]="cookie.value"
+                                            [name]="'cookie-value-' + i"
+                                            [id]="'cookie-value-id-' + i"
+                                            class="form-control"
+                                            placeholder="Cookie value"
+                                        >
+                                    </div>
+                                    <div class="form-group col-2">
+                                        <button
+                                            class="btn btn-outline-primary col-12 form-element-without-label"
+                                            *ngIf="i === 0; else removeCookieBtn"
+                                            (click)="addEntry(2)"
+                                        >
+                                            + Add
+                                        </button>
+                                        <ng-template #removeCookieBtn>
+                                            <button
+                                                (click)="removeEntry(2, i)"
+                                                class="btn btn-outline-danger col-12 form-element-without-label"
+                                            >
+                                                - Remove
+                                            </button>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card text-left">
+                            <div class="card-header text-center">
+                                <h5 class="card-title">Keywords</h5>
+                            </div>
+                            <div class="card-body">
+                                <div
+                                    class="form-row"
+                                    *ngFor="let keyword of cms.extraKeywords; let i = index"
+                                >
+                                    <div class="form-group col-10">
+                                        <label [for]="'word-id-' + i">Word</label>
+                                        <input
+                                            type="text"
+                                            [(ngModel)]="keyword.word"
+                                            [name]="'word-' + i"
+                                            [id]="'word-id-' + i"
+                                            class="form-control"
+                                            placeholder="Keyword"
+                                        >
+                                    </div>
+                                    <div class="form-group col-2">
+                                        <button
+                                            class="btn btn-outline-primary col-12 form-element-without-label"
+                                            *ngIf="i === 0; else removeWordBtn"
+                                            (click)="addEntry(3)"
+                                        >
+                                            + Add
+                                        </button>
+                                        <ng-template #removeWordBtn>
+                                            <button
+                                                (click)="removeEntry(3, i)"
+                                                class="btn btn-outline-danger col-12 form-element-without-label"
+                                            >
+                                                - Remove
+                                            </button>
+                                        </ng-template>
                                     </div>
                                 </div>
                             </div>
@@ -214,10 +359,19 @@
             <div class="modal-footer">
                 <button
                     type="button"
-                    class="btn btn-danger"
+                    class="btn btn-outline-dark"
+                    [disabled]="loading"
                     [rp-close-modal]="modal"
                 >
-                    Close
+                    {{ loading ? 'Loading' : 'Close' }}
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-outline-success"
+                    [disabled]="loading"
+                    (click)="save()"
+                >
+                    {{ loading ? 'Loading' : 'Save' }}
                 </button>
             </div>
 

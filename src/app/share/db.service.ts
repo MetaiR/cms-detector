@@ -1,3 +1,4 @@
+import { Keyword } from './models/keyword';
 import { Cookie } from './models/cookie';
 import { DB } from './models/db';
 import { CMS } from './models/cms';
@@ -62,6 +63,51 @@ export class DbService {
         return db;
     }
 
+    saveOrUpdateCMS(cms: CMS): DB {
+        let db: DB;
+        if (cms.id) {
+            db = this.updateCms(cms);
+        } else {
+            db = this.saveCms(cms);
+        }
+
+        return db;
+    }
+
+    saveCms(cms: CMS): DB {
+        cms.id = v4();
+
+        const db = clone<DB>(this.db, true);
+        db.cmses.push(cms);
+        this.generateAndLoadDB(false, db);
+
+        return db;
+    }
+
+    updateCms(cms: CMS): DB {
+        let db = this.db;
+
+        // because the cms is a clone of the real one we can't use indexOf or any feature
+        // that dependes on refrences, so lets do it in the old fashioned way :D
+        let index = -1;
+
+        for (let i = 0; i < db.cmses.length; i++) {
+            if (db.cmses[i].id === cms.id) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index !== -1) {
+            db = clone<DB>(this.db, true);
+            db.cmses.splice(index, 1);
+            db.cmses.splice(index, 0, cms);
+            this.generateAndLoadDB(false, db);
+        }
+
+        return db;
+    }
+
     loadOrGenerateDB() {
         const dbLocation = this.dbLocation;
         const dbExisted = existsSync(dbLocation);
@@ -96,7 +142,7 @@ export class DbService {
             const cookie1 = new Cookie('.DOTNETNUKE');
             const cookie2 = new Cookie('dnn_IsMobile');
 
-            const keyword1 = 'DNN Platform';
+            const keyword1 = new Keyword('DNN Platform');
 
             const cms = new CMS(v4(), 'DotNetNuke (DNN)', [el1], [cookie1, cookie2], [keyword1]);
 
@@ -156,7 +202,7 @@ export class DbService {
     }
 
     private writeAsync(path: string, str: string) {
-        writeFile(path, str, { encoding: 'utf8' }, (e) => {
+        writeFile(path, str, { encoding: 'utf8', flag: 'w' }, (e) => {
             if (e) {
                 this.errorAlert();
                 return;
@@ -165,7 +211,7 @@ export class DbService {
     }
 
     private writeSync(path: string, str: string) {
-        writeFileSync(path, str, { encoding: 'utf8' });
+        writeFileSync(path, str, { encoding: 'utf8', flag: 'w' });
     }
 
     private errorAlert() {

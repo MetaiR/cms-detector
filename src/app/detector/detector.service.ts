@@ -138,7 +138,7 @@ export class DetectorService {
     private searchInKeywords(cms: CMS, body: string): string {
         let result = 'N/A';
         for (const keyword of cms.extraKeywords) {
-            if (body.indexOf(keyword) !== -1) {
+            if (body.indexOf(keyword.word) !== -1) {
                 result = cms.name;
                 break;
             }

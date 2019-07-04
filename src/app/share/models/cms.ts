@@ -1,3 +1,4 @@
+import { Keyword } from './keyword';
 // we should write undefined incase of using 3rd library like json2typescript
 import { Cookie } from './cookie';
 import { El } from './el';
@@ -13,15 +14,15 @@ export class CMS {
     private _els: El[] = [];
     @JsonProperty('cms_cookie', [Cookie], true)
     private _cookies: Cookie[] = [];
-    @JsonProperty('cms_extra_keyword', [String], true)
-    private _extraKeywords: string[] = [];
+    @JsonProperty('cms_extra_keyword', [Keyword], true)
+    private _extraKeywords: Keyword[] = [];
 
     constructor(
         id?: string,
         name?: string,
         els?: El[],
         cookies?: Cookie[],
-        extraKeywords?: string[]
+        extraKeywords?: Keyword[]
     ) {
         this._id = id;
         this._name = name;
@@ -95,21 +96,21 @@ export class CMS {
         this._cookies = value;
     }
 
+
     /**
      * Getter extraKeywords
-     * @return {string[] }
+     * @return {Keyword[] }
      */
-    public get extraKeywords(): string[] {
+    public get extraKeywords(): Keyword[] {
         return this._extraKeywords;
     }
 
     /**
      * Setter extraKeywords
-     * @param {string[] } value
+     * @param {Keyword[] } value
      */
-    public set extraKeywords(value: string[]) {
+    public set extraKeywords(value: Keyword[]) {
         this._extraKeywords = value;
     }
-
 
 }

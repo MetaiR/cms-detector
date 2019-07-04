@@ -42,7 +42,6 @@ function createWindow() {
             })
         );
     }
-
     win.maximize();
 
     win.on('closed', () => {

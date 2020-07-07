@@ -150,9 +150,32 @@ export class DbService {
 
             const keyword1 = new Keyword('DNN Platform');
 
-            const cms = new CMS(v4(), 'DotNetNuke (DNN)', [el1], [cookie1, cookie2], [keyword1]);
+            const dotNetNuke = new CMS(v4(), 'DotNetNuke (DNN)', [el1], [cookie1, cookie2], [keyword1]);
 
-            db = new DB([cms]);
+            const wpEl1 = new El(
+                'meta[name="generator"]',
+                'content',
+                'WordPress'
+            );
+
+            const wpEl2 = new El(
+                'body',
+                'class',
+                'woocommerce'
+            );
+
+            const wpEl3 = new El(
+                'p',
+                'class',
+                'woocommerce'
+            );
+
+            const wpKeyword1 = new Keyword('yoast');
+            const wpKeyword2 = new Keyword('wordpress');
+
+            const wordpress = new CMS(v4(), 'WordPress', [wpEl1, wpEl2, wpEl3], [], [wpKeyword1, wpKeyword2]);
+
+            db = new DB([wordpress, dotNetNuke]);
         }
 
         const json = this.jConverter.serialize(db);
